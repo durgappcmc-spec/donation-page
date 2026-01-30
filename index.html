@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - 1 Click Payment</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+        }
+        .container { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 30px; 
+            max-width: 420px; 
+            width: 100%; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+        }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: #333; font-size: 22px; margin-bottom: 5px; }
+        .header p { color: #666; font-size: 14px; }
+        .monthly-badge { 
+            background: #e8f5e9; 
+            color: #2e7d32; 
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            display: inline-block; 
+            margin-bottom: 15px; 
+        }
+        .amount-display { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 20px; 
+            border-radius: 15px; 
+            text-align: center; 
+            margin-bottom: 25px; 
+        }
+        .amount-display .amount { font-size: 36px; font-weight: bold; }
+        .amount-display .period { font-size: 14px; opacity: 0.9; margin-top: 5px; }
+        .donor-info { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-bottom: 25px; 
+        }
+        .donor-info p { 
+            color: #555; 
+            font-size: 14px; 
+            margin: 8px 0; 
+            display: flex; 
+            align-items: center;
+        }
+        .donor-info .check { color: #28a745; margin-right: 8px; font-weight: bold; }
+        .donor-info .label { color: #333; font-weight: 600; min-width: 70px; }
+        .donor-info .value { color: #667eea; font-weight: 500; }
+        .upi-buttons { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .upi-btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            padding: 16px 20px; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+        }
+        .upi-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        .upi-btn:active { transform: translateY(0); }
+        .gpay { background: #4285f4; }
+        .phonepe { background: #5f259f; }
+        .paytm { background: #00baf2; }
+        .other-upi { background: #28a745; }
+        .payu-btn { 
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%); 
+            width: 100%; 
+            margin-top: 15px; 
+        }
+        .divider { 
+            text-align: center; 
+            color: #999; 
+            margin: 20px 0; 
+            font-size: 12px; 
+            position: relative;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: #ddd;
+        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+        .secure-badge { text-align: center; margin-top: 20px; color: #888; font-size: 12px; }
+        .loading { display: none; text-align: center; padding: 20px; }
+        .loading.show { display: block; }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #buttons.hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="monthly-badge">🔄 MONTHLY AUTOPAY</span>
+            <h1>Complete Your Donation</h1>
+            <p>Your details are pre-filled - just 1 tap!</p>
+        </div>
+        
+        <div class="amount-display">
+            <div class="amount">₹<span id="displayAmount">479</span></div>
+            <div class="period">per month (Auto-debit enabled)</div>
+        </div>
+        
+        <div class="donor-info">
+            <p><span class="check">✓</span><span class="label">Name:</span><span class="value" id="displayName">-</span></p>
+            <p><span class="check">✓</span><span class="label">Email:</span><span class="value" id="displayEmail">-</span></p>
+            <p><span class="check">✓</span><span class="label">Mobile:</span><span class="value" id="displayPhone">-</span></p>
+        </div>
+        
+        <div id="buttons">
+            <div class="upi-buttons">
+                <button class="upi-btn gpay" onclick="openUPI('gpay')">💳 Pay with Google Pay</button>
+                <button class="upi-btn phonepe" onclick="openUPI('phonepe')">💜 Pay with PhonePe</button>
+                <button class="upi-btn paytm" onclick="openUPI('paytm')">📱 Pay with Paytm</button>
+                <button class="upi-btn other-upi" onclick="openUPI('upi')">🏦 Other UPI Apps</button>
+            </div>
+            <div class="divider">or pay with card/netbanking</div>
+            <button class="upi-btn payu-btn" onclick="openPayU()">💳 Card / Net Banking / Other</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Opening payment app...</p>
+        </div>
+        
+        <div class="secure-badge">🔒 Secured by PayU | 256-bit encryption</div>
+    </div>
+
+    <script>
+        // =====================================================
+        // CONFIGURATION - UPDATE THESE VALUES
+        // =====================================================
+        const config = {
+            merchantVpa: 'yourmerchant@payu',      // Your PayU VPA
+            merchantName: 'Your Organization',     // Your organization name
+            merchantCode: '5411'                   // Your MCC code
+        };
+        // =====================================================
+        
+        // Get URL parameters (auto-filled from Python campaign)
+        const params = new URLSearchParams(window.location.search);
+        
+        const donorData = {
+            name: params.get('name') || params.get('n') || 'Donor',
+            firstName: params.get('fname') || params.get('f') || '',
+            email: params.get('email') || params.get('e') || '',
+            phone: params.get('phone') || params.get('p') || '',
+            amount: params.get('amount') || params.get('a') || '479',
+            txnid: params.get('txnid') || params.get('t') || 'TXN' + Date.now(),
+            payuUrl: params.get('payu') || ''
+        };
+        
+        // Set firstName if not provided
+        if (!donorData.firstName && donorData.name) {
+            donorData.firstName = donorData.name.split(' ')[0];
+        }
+        
+        // Format phone number
+        function formatPhone(phone) {
+            if (!phone) return 'Not provided';
+            phone = phone.replace(/\D/g, '');
+            if (phone.length === 10) {
+                return phone.replace(/(\d{5})(\d{5})/, '$1 $2');
+            }
+            return phone;
+        }
+        
+        // Display donor info (AUTO-FILLED FROM URL)
+        document.getElementById('displayName').textContent = donorData.name;
+        document.getElementById('displayEmail').textContent = donorData.email || 'Not provided';
+        document.getElementById('displayPhone').textContent = formatPhone(donorData.phone);
+        document.getElementById('displayAmount').textContent = donorData.amount;
+        
+        // Build UPI URL for different apps
+        function buildUPIUrl(app) {
+            const upiParams = new URLSearchParams({
+                pa: config.merchantVpa,
+                pn: config.merchantName,
+                mc: config.merchantCode,
+                tr: donorData.txnid,
+                tn: 'Donation by ' + donorData.name,
+                am: donorData.amount,
+                cu: 'INR'
+            });
+            
+            const schemes = {
+                'gpay': 'tez://upi/pay?' + upiParams.toString(),
+                'phonepe': 'phonepe://pay?' + upiParams.toString(),
+                'paytm': 'paytmmp://pay?' + upiParams.toString(),
+                'upi': 'upi://pay?' + upiParams.toString()
+            };
+            
+            return schemes[app] || schemes['upi'];
+        }
+        
+        // Show/hide loading
+        function showLoading() {
+            document.getElementById('buttons').classList.add('hidden');
+            document.getElementById('loading').classList.add('show');
+        }
+        
+        function hideLoading() {
+            document.getElementById('buttons').classList.remove('hidden');
+            document.getElementById('loading').classList.remove('show');
+        }
+        
+        // Open UPI app
+        function openUPI(app) {
+            const url = buildUPIUrl(app);
+            showLoading();
+            
+            const startTime = Date.now();
+            window.location.href = url;
+            
+            // Fallback after 2.5 seconds
+            setTimeout(function() {
+                hideLoading();
+                if (Date.now() - startTime < 3000) {
+                    if (confirm('UPI app not found. Pay with Card/Net Banking instead?')) {
+                        openPayU();
+                    }
+                }
+            }, 2500);
+        }
+        
+        // Open PayU for card/netbanking
+        function openPayU() {
+            if (donorData.payuUrl) {
+                showLoading();
+                window.location.href = decodeURIComponent(donorData.payuUrl);
+            } else {
+                alert('Payment link not available. Please contact support.');
+            }
+        }
+        
+        // Debug log
+        console.log('Donor Data:', donorData);
+    </script>
+</body>
+</html>
