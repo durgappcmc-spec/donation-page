@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+        }
+        .container { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 40px 30px; 
+            max-width: 420px; 
+            width: 100%; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+            text-align: center;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 40px;
+            color: white;
+        }
+        h1 { color: #28a745; font-size: 28px; margin-bottom: 10px; }
+        p { color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 15px; }
+        .amount-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+        .amount-box .label { color: #888; font-size: 14px; }
+        .amount-box .amount { color: #28a745; font-size: 32px; font-weight: bold; margin: 5px 0; }
+        .amount-box .period { color: #666; font-size: 14px; }
+        .autopay-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 15px 0;
+        }
+        .info-text {
+            color: #888;
+            font-size: 13px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✓</div>
+        <h1>Thank You!</h1>
+        <p>Your donation has been received successfully.</p>
+        
+        <div class="amount-box">
+            <div class="label">Monthly Donation</div>
+            <div class="amount">₹<span id="displayAmount">479</span></div>
+            <div class="period">per month</div>
+        </div>
+        
+        <div class="autopay-badge">🔄 AutoPay Enabled</div>
+        
+        <p>Your monthly donation will be automatically processed.<br>You'll receive a reminder before each payment.</p>
+        
+        <div class="info-text">
+            A confirmation has been sent to your email.<br>
+            Transaction ID will be in your SMS/email.
+        </div>
+    </div>
+    
+    <script>
+        // Get amount from URL if provided
+        const params = new URLSearchParams(window.location.search);
+        const amount = params.get('amount') || params.get('a') || '479';
+        document.getElementById('displayAmount').textContent = amount;
+    </script>
+</body>
+</html>
