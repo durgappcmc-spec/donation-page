@@ -169,7 +169,7 @@
             <!-- PRIMARY: One-tap UPI button -->
             <div class="upi-buttons">
                 <button class="upi-btn primary-upi" onclick="openUPI('upi')">
-                    🏦 PAY ₹<span id="btnAmount">479</span> WITH UPI
+                    🏦 PAY ₹<span id="btnAmount">1</span> WITH UPI
                 </button>
             </div>
             
@@ -221,7 +221,7 @@
             firstName: params.get('fname') || params.get('f') || '',
             email: params.get('email') || params.get('e') || '',
             phone: params.get('phone') || params.get('p') || '',
-            amount: params.get('amount') || params.get('a') || '479',
+            amount: params.get('amount') || params.get('a') || '1',
             txnid: params.get('txnid') || params.get('t') || 'TXN' + Date.now(),
             payuUrl: params.get('payu') || ''
         };
